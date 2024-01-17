@@ -4,6 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"io"
+	"log/slog"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -27,6 +29,7 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
+
 }
 
 func init() {
@@ -39,4 +42,19 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.PersistentFlags().String("ceph-config", "/etc/ceph/ceph.conf", "Path to ceph config")
+	rootCmd.PersistentFlags().Bool("debug", false, "Enable debug logs")
+
+	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+		return setupLogs(os.Stdout)
+	}
+}
+
+func setupLogs(out io.Writer) error {
+	if a, _ := rootCmd.Flags().GetBool("debug"); a {
+
+		slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		})))
+	}
+	return nil
 }
