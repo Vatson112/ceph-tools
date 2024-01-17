@@ -1,0 +1,68 @@
+---
+# Настройки runtime
+run:
+  # Таймаут времени выполнения программы
+  timeout: 5m
+
+# Настройки output'а
+output:
+  # Формат вывода
+  #format: "colored-tab,github-actions:lint-report.plain"
+  # Вывод строки кода с ошибкой
+  print-issued-lines: true
+  # Добавление названия линтера
+  print-linter-name: true
+  # Вывод каждой ошибки на новой строке
+  uniq-by-line: true
+  # Префикс пути файлов
+  # path-prefix: ""
+  # Сортировка результатов
+  sort-results: true
+
+# Настройки активных lint'ов
+linters:
+  # Включение всех lint'ов
+  enable-all: true
+  # Отключение конкретных lint'ов с описанием причин отключения
+  disable:
+    - maligned          # deprecated
+    - golint            # deprecated
+    - nosnakecase       # deprecated
+    - varcheck          # deprecated
+    - exhaustivestruct  # deprecated
+    - interfacer        # deprecated
+    - structcheck       # deprecated
+    - ifshort           # deprecated
+    - scopelint         # deprecated
+    - deadcode          # deprecated
+
+# Конфигурирование конкретных lint'ов
+linters-settings:
+  godot:
+    scope: all
+    period: true
+    capital: true
+  govet:
+    enable-all: true
+    check-shadowing: true
+    disable: []
+  stylecheck:
+    checks:
+      - all
+
+# Настройка ошибок
+issues:
+  # Допустимое количество ошибок для ошибки. Уникально для каждого lint'а
+  max-issues-per-linter: 0
+  # Допустимое количество ошибок с повторяющимся текстом
+  max-same-issues: 0
+  # Удаление стандартных exclude'ов
+  exclude-use-default: false
+  # Предложение для исправления ошибки (если поддерживается lint'ом)
+
+# Настройка обработки ошибок
+severity:
+  # Стандартный уровень ошибки
+  default-severity: warning
+  # Определение уровней ошибок по определенным правилам
+  rules: []

@@ -1,0 +1,10 @@
+.vscode
+
+# Test binary, built with `go test -c`
+*.test
+
+# local builded binary
+bin
+
+# examples
+examples
