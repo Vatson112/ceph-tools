@@ -20,3 +20,7 @@ func (c *RadosConn) Connect() error {
 	c.Client, err = NewCephClient(c.CephConfig)
 	return err
 }
+
+func (c *RadosConn) Shutdown() {
+	c.Client.Shutdown()
+}

@@ -32,7 +32,9 @@ You must set --poolname for using it.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cconf, _ := cmd.Flags().GetString("ceph-config")
 		pname, _ := cmd.Flags().GetString("poolname")
+		delete, _ := cmd.Flags().GetBool("delete")
 		rcon := internal.NewRadosConnection(cconf)
+		defer rcon.Shutdown()
 		err := rcon.Connect()
 		if err != nil {
 			slog.Error(fmt.Sprintf("Error login to cluster. Err=%s", err))
@@ -65,12 +67,25 @@ You must set --poolname for using it.`,
 		}
 		slog.Info("Found broken images:")
 		pp.Println(brokenImage)
+		if delete {
+			slog.Info("Start removing broken images.")
+			for _, iname := range brokenImage {
+				image := rbd.GetImage(ioctx, iname)
+				slog.Debug(fmt.Sprintf("Delete image=%s", image.GetName()))
+				err := image.Remove()
+				if err != nil {
+					slog.Error(fmt.Sprintf("Failed to delete image=%s", iname))
+				}
+				slog.Info(fmt.Sprintf("Deleted image=%s", image.GetName()))
+			}
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(findBrokenRbdCmd)
 	findBrokenRbdCmd.Flags().String("poolname", "", "Name of the rados pool")
+	findBrokenRbdCmd.Flags().Bool("delete", false, "Delete founded rbd images.")
 	findBrokenRbdCmd.MarkFlagRequired("poolname")
 	// Here you will define your flags and configuration settings.
 
